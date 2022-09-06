@@ -11,6 +11,7 @@ namespace CalcProject
             //Hello from gitHub
 
             //Hello from VisualStudio
+            //06.09.22
         }
     }
 }
