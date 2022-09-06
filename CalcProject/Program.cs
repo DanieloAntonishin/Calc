@@ -7,6 +7,7 @@ namespace CalcProject
         static void Main(string[] args)
         {
             Console.WriteLine(RomanNumber.Parse("CDI"));
+            Console.WriteLine(RomanNumber.Parse("I"));
             //Hello from gitHub
 
             //Hello from VisualStudio
