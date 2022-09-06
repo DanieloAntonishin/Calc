@@ -6,10 +6,12 @@ namespace CalcProject
     {
         static void Main(string[] args)
         {
+            //Add some info 06.09.22
             Console.WriteLine(RomanNumber.Parse("CDI"));
             //Hello from gitHub
 
             //Hello from VisualStudio
+            
         }
     }
 }
