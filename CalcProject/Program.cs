@@ -13,7 +13,6 @@ namespace CalcProject
 
             //Hello from VisualStudio
             //06.09.22
-            
         }
     }
 }
