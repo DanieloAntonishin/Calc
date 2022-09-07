@@ -25,6 +25,8 @@ namespace CalcProjectTest
             Assert.AreEqual(500, RomanNumber.Parse("D"));
             Assert.AreEqual(1000, RomanNumber.Parse("M"));
 
+            Assert.AreEqual(0, RomanNumber.Parse("N"));
+
         }
         [TestMethod]
         public void RomanNumberParseTest2Digit()
@@ -77,6 +79,26 @@ namespace CalcProjectTest
             Assert.AreEqual(exp.Message, empt.Message);
 
             Assert.IsNotNull(Assert.ThrowsException<ArgumentNullException>(() => { RomanNumber.Parse(null); }));
+        }
+
+        [TestMethod]
+        public void RomanNumberParseOnlyN()
+        {
+            var empt = Assert.ThrowsException<ArgumentException>(() => { RomanNumber.Parse("XNX"); });
+            var exp = new ArgumentException("Invalid number, only one 'N'");
+            Assert.AreEqual(exp.Message, empt.Message);
+
+            var empt2 = Assert.ThrowsException<ArgumentException>(() => { RomanNumber.Parse("XNN"); });
+            var exp2 = new ArgumentException("Invalid number, only one 'N'");
+            Assert.AreEqual(exp2.Message, empt2.Message);
+
+            var empt3 = Assert.ThrowsException<ArgumentException>(() => { RomanNumber.Parse("NN"); });
+            var exp3 = new ArgumentException("Invalid number, only one 'N'");
+            Assert.AreEqual(exp3.Message, empt3.Message);
+
+            var empt4 = Assert.ThrowsException<ArgumentException>(() => { RomanNumber.Parse("NX"); });
+            var exp4 = new ArgumentException("Invalid number, only one 'N'");
+            Assert.AreEqual(exp4.Message, empt4.Message);
         }
 
     }
