@@ -76,9 +76,9 @@ namespace CalcProjectTest
             var exp = new ArgumentException("Empty string not allowed");
             Assert.AreEqual(exp.Message, empt.Message);
 
-           
-           Assert.IsNotNull(Assert.ThrowsException<ArgumentNullException>(() => { RomanNumber.Parse(null); }));
+            Assert.IsNotNull(Assert.ThrowsException<ArgumentNullException>(() => { RomanNumber.Parse(null); }));
         }
+
     }
 }
 

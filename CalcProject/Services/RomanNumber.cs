@@ -14,8 +14,8 @@ namespace CalcProject.Services
             {
                 throw new ArgumentException("Empty string not allowed");
             }
-            char[] digits = { 'I', 'V', 'X', 'L', 'C', 'D', 'M' };
-            int[] digitValues = { 1, 5, 10, 50, 100, 500, 1000 };
+            char[] digits = { 'N','I', 'V', 'X', 'L', 'C', 'D', 'M' };
+            int[] digitValues = { 0,1, 5, 10, 50, 100, 500, 1000 };
             // Якщо наступна цифра числа більша за поточну, то
             // вона віднімається від результату, інакше додається
             // IX : -1 + 10;  XC : -10 + 100;  XX : +10+10; CX : +100+10
@@ -27,13 +27,15 @@ namespace CalcProject.Services
 
                 int ind = Array.IndexOf(digits, digit);
 
+                if (ind == 0 && i - 1 !>= 0)//Проверка на наличие более одного 'N'
+                {
+                    throw new ArgumentException("Invalid number, only one 'N'");
+                }
                 if (ind == -1)
                 {
-
                     throw new ArgumentException($"Invalid char {digit}");
-      
                 }
-                
+
                 int val = digitValues[ind];
                 if (val < lastnumb) { res -= val; }
                 else { res += val; }
