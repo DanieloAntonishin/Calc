@@ -67,7 +67,7 @@ namespace CalcProjectTest
             //var expn2 = new ArgumentException($"Invalid char A");
             //Assert.AreEqual(expn2.Message, exc2.Message);
             string mess = "Invalid char";
-            Assert.AreEqual(true,Assert.ThrowsException<ArgumentException>(() => { RomanNumber.Parse(" XX"); }).Message.StartsWith(mess));
+            Assert.AreEqual(true, Assert.ThrowsException<ArgumentException>(() => { RomanNumber.Parse(" XX"); }).Message.StartsWith(mess));
         }
         [TestMethod]
         public void RomanNumberParseTestEmpty()
@@ -78,7 +78,60 @@ namespace CalcProjectTest
 
             Assert.IsNotNull(Assert.ThrowsException<ArgumentNullException>(() => { RomanNumber.Parse(null); }));
         }
+        [TestMethod]
+        public void RomanNumberCtor()
+        {
+            RomanNumber romanNumber = new();
+            Assert.IsNotNull(romanNumber);
 
+            romanNumber = new(10);
+            Assert.IsNotNull(romanNumber);
+
+            romanNumber = new(0);
+            Assert.IsNotNull(romanNumber);
+        }
+        [TestMethod]
+        public void RomanNumberToString()
+        {
+            RomanNumber romanNumber = new();
+            Assert.AreEqual("N", romanNumber.ToString());
+            romanNumber = new(10);
+            Assert.AreEqual("X", romanNumber.ToString());
+            romanNumber = new(90);
+            Assert.AreEqual("XC", romanNumber.ToString());
+            romanNumber = new(20);
+            Assert.AreEqual("XX", romanNumber.ToString());
+            romanNumber = new(1999);
+            Assert.AreEqual("MCMXCIX", romanNumber.ToString());
+        }
+        [TestMethod]
+        public void RomanNumberToStringParseCrossTest()
+        {
+            RomanNumber roman = new();
+            for (int n = 0; n <= 2022; n++)
+            {
+                roman.romanNumber = n;
+                Assert.AreEqual(n, RomanNumber.Parse(roman.ToString()));
+            }
+        }
+        [TestMethod]
+        public void RomanNumberTypeTest()
+        {
+            RomanNumber rn1 = new(10);
+            RomanNumber rn2 = rn1;
+            Assert.AreSame(rn1, rn2);
+
+            RomanNumber rn3 = rn1 with { };
+            Assert.AreNotSame(rn3, rn1);
+            Assert.AreEqual(rn3, rn1);
+            Assert.IsTrue(rn1 == rn3);
+
+            RomanNumber rn4 = rn1 with { romanNumber = 20 };
+            Assert.AreNotSame(rn4, rn1);
+            Assert.AreNotEqual(rn4, rn1);
+            Assert.IsFalse(rn1 == rn4);
+            Assert.IsFalse(rn1.Equals(rn4));
+        }
     }
 }
 
