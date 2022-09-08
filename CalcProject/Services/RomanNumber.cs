@@ -62,6 +62,10 @@ namespace CalcProject.Services
                 {
                     throw new ArgumentException("Invalid number, only one 'N'");
                 }
+                if(str.Contains('N') && digit != 'N')
+                {
+                    throw new ArgumentException("Invalid number, only one 'N'");
+                }
                 if (ind == -1)
                 {
                     throw new ArgumentException($"Invalid char {digit}");
