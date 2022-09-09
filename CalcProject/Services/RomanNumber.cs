@@ -87,5 +87,10 @@ namespace CalcProject.Services
             return isNegative ? -res:res;// добавляем "-" в начало, если флаг истина
         }
 
+        public RomanNumber Add(RomanNumber rn)
+        {
+
+            return null;
+        }
     }
 }

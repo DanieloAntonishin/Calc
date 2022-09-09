@@ -176,6 +176,25 @@ namespace CalcProjectTest
             Assert.ThrowsException<ArgumentException>(() => RomanNumber.Parse("--"));
         }
     }
+
+    [TestClass]
+    public class OperationsTest
+    {
+        [TestMethod]
+        public void AddTest()
+        {
+            RomanNumber rn = new(5);
+
+            Assert.AreEqual(10, rn.Add(new RomanNumber(5)));
+            Assert.AreEqual(25, rn.Add(new RomanNumber(20)));
+            Assert.AreEqual(6, rn.Add(new RomanNumber(1)));
+
+            Assert.AreEqual(5, rn.Add(new RomanNumber(0)));
+            Assert.AreEqual(2, rn.Add(new RomanNumber(-3)));
+            Assert.AreEqual(0, rn.Add(new RomanNumber(-5)));
+            Assert.AreEqual(-5, rn.Add(new RomanNumber(-10)));
+        }
+    }
 }
 
 //TDD - Test Drive Development - разработка управления тестами
