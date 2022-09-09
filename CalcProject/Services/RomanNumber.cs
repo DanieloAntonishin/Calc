@@ -86,11 +86,45 @@ namespace CalcProject.Services
             }
             return isNegative ? -res:res;// добавляем "-" в начало, если флаг истина
         }
-
+        /// <summary>
+        /// Операция сложения чисел
+        /// </summary>
+        /// <param name="rn"></param>
+        /// <returns>Римское число</returns>
+        /// <exception cref="ArgumentNullException"></exception>
         public RomanNumber Add(RomanNumber rn)
         {
-
-            return null;
+            if (rn is null) { throw new ArgumentNullException(nameof(rn));}
+            return new(this.romanNumber + rn.romanNumber);
+            //return this with {romanNumber=this.romanNumber + rn.romanNumber };
+        }
+        public RomanNumber Add(int val)
+        {
+            return new(this.romanNumber + val);
+        }
+        public RomanNumber Add(string str)
+        {
+            return new(this.romanNumber +RomanNumber.Parse(str));
+        }
+        public static RomanNumber Add (RomanNumber rn1, RomanNumber rn2)
+        {
+            return new (rn1.romanNumber + rn2.romanNumber);
+        }
+        public static RomanNumber Add(int rn1, int rn2)
+        {
+            return new(rn1 + rn2);
+        }
+        public static RomanNumber Add(string rn1, string rn2)
+        {
+            return new(Parse(rn1) + Parse(rn2));
+        }
+        public static RomanNumber Add(RomanNumber rn1, string rn2)
+        {
+            return new(rn1.romanNumber + Parse(rn2));
+        }
+        public static RomanNumber Add(RomanNumber rn1, int rn2)
+        {
+            return new(rn1.romanNumber + rn2);
         }
     }
 }
