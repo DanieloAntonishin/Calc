@@ -17,6 +17,7 @@ namespace CalcProjectTest
         public void RomanNumberParseTest1Digit()
 
         {
+            Assert.AreEqual(0, RomanNumber.Parse("N"));
             Assert.AreEqual(1, RomanNumber.Parse("I"));
             Assert.AreEqual(5, RomanNumber.Parse("V"));
             Assert.AreEqual(10, RomanNumber.Parse("X"));
@@ -25,7 +26,8 @@ namespace CalcProjectTest
             Assert.AreEqual(500, RomanNumber.Parse("D"));
             Assert.AreEqual(1000, RomanNumber.Parse("M"));
 
-            Assert.AreEqual(0, RomanNumber.Parse("N"));
+
+
 
         }
         [TestMethod]
