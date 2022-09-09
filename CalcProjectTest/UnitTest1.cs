@@ -85,10 +85,11 @@ namespace CalcProjectTest
         {
             RomanNumber romanNumber = new();
             Assert.IsNotNull(romanNumber);
-
+        }
         [TestMethod]
         public void RomanNumberParseOnlyN()
         {
+            RomanNumber romanNumber = new();
             var empt = Assert.ThrowsException<ArgumentException>(() => { RomanNumber.Parse("XNX"); });
             var exp = new ArgumentException("Invalid number, only one 'N'");
             Assert.AreEqual(exp.Message, empt.Message);
@@ -104,7 +105,7 @@ namespace CalcProjectTest
             var empt4 = Assert.ThrowsException<ArgumentException>(() => { RomanNumber.Parse("NX"); });
             var exp4 = new ArgumentException("Invalid number, only one 'N'");
             Assert.AreEqual(exp4.Message, empt4.Message);
-        }
+           
 
             romanNumber = new(10);
             Assert.IsNotNull(romanNumber);
@@ -153,6 +154,26 @@ namespace CalcProjectTest
             Assert.AreNotEqual(rn4, rn1);
             Assert.IsFalse(rn1 == rn4);
             Assert.IsFalse(rn1.Equals(rn4));
+        }
+        [TestMethod]
+        public void RomanNumberNegative()
+        {
+            //Тесты для Parse
+            Assert.AreEqual(-10, RomanNumber.Parse("-X"));
+            Assert.AreEqual(-400, RomanNumber.Parse("-CD"));
+            Assert.AreEqual(-1900, RomanNumber.Parse("-MCM"));
+            //ToString()
+            RomanNumber rn = new() { romanNumber = -10 };
+            Assert.AreEqual("-X", rn.ToString());
+            rn.romanNumber = -90;
+            Assert.AreEqual("-XC", rn.ToString());
+            //Исключения
+            Assert.ThrowsException<ArgumentException>(() => RomanNumber.Parse("M-CM"));
+            Assert.ThrowsException<ArgumentException>(() => RomanNumber.Parse("M-"));
+            Assert.ThrowsException<ArgumentException>(() => RomanNumber.Parse("-"));
+            Assert.ThrowsException<ArgumentException>(() => RomanNumber.Parse("-N"));
+            Assert.ThrowsException<ArgumentException>(() => RomanNumber.Parse("--X"));
+            Assert.ThrowsException<ArgumentException>(() => RomanNumber.Parse("--"));
         }
     }
 }

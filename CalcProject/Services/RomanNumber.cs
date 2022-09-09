@@ -1,19 +1,21 @@
 ﻿using System;
 namespace CalcProject.Services
 {
-
     public record RomanNumber
     {
 
         public int romanNumber { set; get; }
       
         public RomanNumber(int num=0) => romanNumber = num;
-        
+        /// <summary>
+        /// перевод из арабских чисел в римские
+        /// </summary>
+        /// <returns>Строку</returns>
         public override string ToString()
         {
             if (this.romanNumber == 0) { return "N"; };
-            int n=this.romanNumber;
-            string res = "";
+            int n=this.romanNumber< 0 ?-this.romanNumber:this.romanNumber;
+            string res = this.romanNumber<0?"-":"";
             string[] parts = {"M","CM","D","CD","C","XC","L","XL","X","IX","V","IV","I"};
             int[] val = {1000,900,500,400,100,90,50,40,10,9,5,4,1 };
            
@@ -40,11 +42,20 @@ namespace CalcProject.Services
             {
                 throw new ArgumentNullException();
             }
+           
+            if (str == "N") { return 0; }
+
+            bool isNegative = false;// переменная флаг, для проверки на '-'
+            if (str.StartsWith('-'))
+            {
+                isNegative= true;
+                str=str[1..];//Переход на 1 позицию и приравнивание
+            }
+
             if (str.Length == 0)
             {
                 throw new ArgumentException("Empty string not allowed");
             }
-            if (str == "N") { return 0; }
             char[] digits = { 'I', 'V', 'X', 'L', 'C', 'D', 'M' };
             int[] digitValues = { 1, 5, 10, 50, 100, 500, 1000 };
             // Якщо наступна цифра числа більша за поточну, то
@@ -57,12 +68,8 @@ namespace CalcProject.Services
                 char digit = str[i];
 
                 int ind = Array.IndexOf(digits, digit);
-
-                if (digit == 'N' && i - 1! >= 0)//Проверка на наличие более одного 'N'
-                {
-                    throw new ArgumentException("Invalid number, only one 'N'");
-                }
-                if(str.Contains('N') && digit != 'N')
+                
+                if (str.Contains('N') && lastnumb==0)//Проверка на наличие более одного 'N'
                 {
                     throw new ArgumentException("Invalid number, only one 'N'");
                 }
@@ -77,9 +84,7 @@ namespace CalcProject.Services
 
                 lastnumb = val;
             }
-
-
-            return res;
+            return isNegative ? -res:res;// добавляем "-" в начало, если флаг истина
         }
 
     }
