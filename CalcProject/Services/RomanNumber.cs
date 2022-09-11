@@ -106,8 +106,11 @@ namespace CalcProject.Services
         {
             return new(this.romanNumber +RomanNumber.Parse(str));
         }
+
+        //Тесты для статиков
         public static RomanNumber Add (RomanNumber rn1, RomanNumber rn2)
         {
+            if (rn1 is null||rn2 is null) { throw new ArgumentNullException(nameof(RomanNumber)); }
             return new (rn1.romanNumber + rn2.romanNumber);
         }
         public static RomanNumber Add(int rn1, int rn2)
@@ -116,14 +119,27 @@ namespace CalcProject.Services
         }
         public static RomanNumber Add(string rn1, string rn2)
         {
+            if (rn1 is null || rn2 is null) { throw new ArgumentNullException(nameof(RomanNumber)); }
+
+            if (rn1.Length == 0||rn2.Length==0)
+            {
+                throw new ArgumentException("Empty string not allowed");
+            }
             return new(Parse(rn1) + Parse(rn2));
         }
         public static RomanNumber Add(RomanNumber rn1, string rn2)
         {
+            if (rn1 is null) { throw new ArgumentNullException(nameof(rn1)); }
+
+            if (rn2.Length == 0)
+            {
+                throw new ArgumentException("Empty string not allowed");
+            }
             return new(rn1.romanNumber + Parse(rn2));
         }
         public static RomanNumber Add(RomanNumber rn1, int rn2)
         {
+            if (rn1 is null) { throw new ArgumentNullException(nameof(rn1)); }
             return new(rn1.romanNumber + rn2);
         }
     }
