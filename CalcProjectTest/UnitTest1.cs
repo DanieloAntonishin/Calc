@@ -238,16 +238,16 @@ namespace CalcProjectTest
             RomanNumber rn10 = RomanNumber.Add("I","IX");
             RomanNumber rn9 = RomanNumber.Add(rn5,"IV");
             RomanNumber rn15 = RomanNumber.Add(rn5,rn10);
-            //Прохождения тестов
+            //Прохождения тестов + рефакторинга
             Assert.AreEqual(5, rn5.romanNumber);
-            Assert.AreEqual(rn8.romanNumber, rn5.romanNumber+3);
+            Assert.AreEqual(rn8.romanNumber, (rn5.romanNumber+3));
             Assert.AreEqual(rn10.ToString(), "X");
             Assert.AreEqual(rn9.romanNumber, rn5.romanNumber+RomanNumber.Parse("IV"));
             Assert.AreEqual(rn15.romanNumber, rn5.romanNumber + rn10.romanNumber);
-            //Исключения для статика 
+            //Исключения для статика + для рефакторинга
             Assert.ThrowsException<ArgumentException>(() => RomanNumber.Add("",""));
             Assert.ThrowsException<ArgumentException>(() => RomanNumber.Add("-","-"));
-            Assert.ThrowsException<ArgumentNullException>(() => RomanNumber.Add("",(string)null!));
+            Assert.ThrowsException<ArgumentException>(() => RomanNumber.Add("",null!));
             Assert.ThrowsException<ArgumentNullException>(() => RomanNumber.Add((RomanNumber)null!,""));
             Assert.ThrowsException<ArgumentNullException>(() => RomanNumber.Add((RomanNumber)null!,0));
             Assert.ThrowsException<ArgumentNullException>(() => RomanNumber.Add((RomanNumber)null!,(RomanNumber)null!));
