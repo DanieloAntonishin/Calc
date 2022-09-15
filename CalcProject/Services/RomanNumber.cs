@@ -3,10 +3,8 @@ namespace CalcProject.Services
 {
     public record RomanNumber
     {
-
-
         public int romanNumber { set; get; }
-
+        public static Resources Resources { get; set; } = null!;    // DI
         public RomanNumber(int num = 0) => romanNumber = num;
         /// <summary>
         /// перевод из арабских чисел в римские
@@ -61,7 +59,7 @@ namespace CalcProject.Services
                 str = str[1..];  // Переход на 1 позицию и приравнивание
             }
 
-            if (str.Length == 0) { throw new ArgumentException(Resources.GetEmptyStringException()); }//когда пустая строка генерируем исключения
+            if (str.Length == 0) { throw new ArgumentException(Resources.GetEmptyStringMessage()); }//когда пустая строка генерируем исключения
 
             char[] digits = { 'I', 'V', 'X', 'L', 'C', 'D', 'M' };
             int[] digitValues = { 1, 5, 10, 50, 100, 500, 1000 };
@@ -318,7 +316,7 @@ namespace CalcProject.Services
                 if (pars[i] is int val) rns[i] = new RomanNumber(val);                                 // int
                 else if (pars[i] is String str && str.Length > 0) rns[i] = new RomanNumber(Parse(str));  // string
                 else if (pars[i] is RomanNumber rn) rns[i] = rn;                                       // RomanNumber
-                else throw new ArgumentException(Resources.GetInvalidTypeException(i + 1, pars[i].GetType().Name));                     // else вызов исключения 
+                else throw new ArgumentException(Resources.GetInvalidTypeMessage(i + 1, pars[i].GetType().Name));                     // else вызов исключения 
             }
 
             return rns[0].Add(rns[1]);  // результат 

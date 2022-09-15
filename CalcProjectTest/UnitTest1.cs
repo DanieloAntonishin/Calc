@@ -7,9 +7,17 @@ namespace CalcProjectTest
     [TestClass]
     public class UnitTest1
     {
+
+        private Resources Resources { get; set; } = new();
+        public UnitTest1()
+        {
+            RomanNumber.Resources = Resources;
+        }
+
         [TestMethod]
         public void CalcTest()
         {
+
             CalcProject.Services.Calc calc = new();
             Assert.IsNotNull(calc);
         }
@@ -75,7 +83,7 @@ namespace CalcProjectTest
         public void RomanNumberParseTestEmpty()
         {
             var empt = Assert.ThrowsException<ArgumentException>(() => { RomanNumber.Parse(""); });
-            var exp = new ArgumentException(Resources.GetEmptyStringException());
+            var exp = new ArgumentException(Resources.GetEmptyStringMessage());
             Assert.AreEqual(exp.Message, empt.Message);
 
             Assert.IsNotNull(Assert.ThrowsException<ArgumentNullException>(() => { RomanNumber.Parse(null); }));
@@ -180,6 +188,12 @@ namespace CalcProjectTest
     [TestClass]
     public class OperationsTest
     {
+        private Resources Resources { get; set; } = new();
+        public OperationsTest()
+        {
+            RomanNumber.Resources = Resources;
+        }
+
         [TestMethod]
         public void AddRnTest()
         {
