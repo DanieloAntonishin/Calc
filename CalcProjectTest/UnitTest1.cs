@@ -26,9 +26,6 @@ namespace CalcProjectTest
             Assert.AreEqual(500, RomanNumber.Parse("D"));
             Assert.AreEqual(1000, RomanNumber.Parse("M"));
 
-
-
-
         }
         [TestMethod]
         public void RomanNumberParseTest2Digit()
@@ -53,31 +50,32 @@ namespace CalcProjectTest
             //Assert.AreEqual(0, RomanNumber.Parse("XXA")); not working, exception like fail test
             //Assert.ThrowsException<Exception>(() => { RomanNumber.Parse("XX"); }); not working, waiting Exception but comes ArgumentException
             var exc = Assert.ThrowsException<ArgumentException>(() => { RomanNumber.Parse("XXA"); });//save 
-            var exp = new ArgumentException($"Invalid char A"); //expected result
+            var exp = new ArgumentException(Resources.GetInvalidCharMessage('A')); //expected result
             Assert.AreEqual(exp.Message, exc.Message);
         }
         [TestMethod]
         public void RomanNumberParseTestInavalidDigit2()
         {
-            //var exc = Assert.ThrowsException<ArgumentException>(() => { RomanNumber.Parse("X2X"); });
-            //var expn = new ArgumentException($"Invalid char 2");
-            //Assert.AreEqual(expn.Message, exc.Message);
+            var exc = Assert.ThrowsException<ArgumentException>(() => { RomanNumber.Parse("X2X"); });
+            var expn = new ArgumentException(Resources.GetInvalidCharMessage('2'));
+            Assert.AreEqual(expn.Message, exc.Message);
 
-            //var exc1 = Assert.ThrowsException<ArgumentException>(() => { RomanNumber.Parse("1IX"); });
-            //var expn1 = new ArgumentException($"Invalid char 1");
-            //Assert.AreEqual(expn1.Message, exc1.Message);
+            var exc1 = Assert.ThrowsException<ArgumentException>(() => { RomanNumber.Parse("1IX"); });
+            var expn1 = new ArgumentException(Resources.GetInvalidCharMessage('1'));
+            Assert.AreEqual(expn1.Message, exc1.Message);
 
-            //var exc2 = Assert.ThrowsException<ArgumentException>(() => { RomanNumber.Parse("AX"); });
-            //var expn2 = new ArgumentException($"Invalid char A");
-            //Assert.AreEqual(expn2.Message, exc2.Message);
-            string mess = "Invalid char";
-            Assert.AreEqual(true, Assert.ThrowsException<ArgumentException>(() => { RomanNumber.Parse(" XX"); }).Message.StartsWith(mess));
+            var exc2 = Assert.ThrowsException<ArgumentException>(() => { RomanNumber.Parse("AX"); });
+            var expn2 = new ArgumentException(Resources.GetInvalidCharMessage('A'));
+            Assert.AreEqual(expn2.Message, exc2.Message);
+
+            Assert.AreEqual(true, Assert.ThrowsException<ArgumentException>(() => { RomanNumber.Parse("2X X1"); })
+                .Message.StartsWith(Resources.GetInvalidCharMessage('\0')[..5]));
         }
         [TestMethod]
         public void RomanNumberParseTestEmpty()
         {
             var empt = Assert.ThrowsException<ArgumentException>(() => { RomanNumber.Parse(""); });
-            var exp = new ArgumentException("Empty string not allowed");
+            var exp = new ArgumentException(Resources.GetEmptyStringException());
             Assert.AreEqual(exp.Message, empt.Message);
 
             Assert.IsNotNull(Assert.ThrowsException<ArgumentNullException>(() => { RomanNumber.Parse(null); }));
@@ -93,19 +91,19 @@ namespace CalcProjectTest
         {
             RomanNumber romanNumber = new();
             var empt = Assert.ThrowsException<ArgumentException>(() => { RomanNumber.Parse("XNX"); });
-            var exp = new ArgumentException("Invalid number, only one 'N'");
+            var exp = new ArgumentException(Resources.GetOnlyOne_N_Exception());
             Assert.AreEqual(exp.Message, empt.Message);
 
             var empt2 = Assert.ThrowsException<ArgumentException>(() => { RomanNumber.Parse("XNN"); });
-            var exp2 = new ArgumentException("Invalid number, only one 'N'");
+            var exp2 = new ArgumentException(Resources.GetOnlyOne_N_Exception());
             Assert.AreEqual(exp2.Message, empt2.Message);
 
             var empt3 = Assert.ThrowsException<ArgumentException>(() => { RomanNumber.Parse("NN"); });
-            var exp3 = new ArgumentException("Invalid number, only one 'N'");
+            var exp3 = new ArgumentException(Resources.GetOnlyOne_N_Exception());
             Assert.AreEqual(exp3.Message, empt3.Message);
 
             var empt4 = Assert.ThrowsException<ArgumentException>(() => { RomanNumber.Parse("NX"); });
-            var exp4 = new ArgumentException("Invalid number, only one 'N'");
+            var exp4 = new ArgumentException(Resources.GetOnlyOne_N_Exception());
             Assert.AreEqual(exp4.Message, empt4.Message);
            
 
@@ -164,12 +162,12 @@ namespace CalcProjectTest
             Assert.AreEqual(-10, RomanNumber.Parse("-X"));
             Assert.AreEqual(-400, RomanNumber.Parse("-CD"));
             Assert.AreEqual(-1900, RomanNumber.Parse("-MCM"));
-            //ToString()
+            // ToString()
             RomanNumber rn = new() { romanNumber = -10 };
             Assert.AreEqual("-X", rn.ToString());
             rn.romanNumber = -90;
             Assert.AreEqual("-XC", rn.ToString());
-            //Исключения
+            // Исключения
             Assert.ThrowsException<ArgumentException>(() => RomanNumber.Parse("M-CM"));
             Assert.ThrowsException<ArgumentException>(() => RomanNumber.Parse("M-"));
             Assert.ThrowsException<ArgumentException>(() => RomanNumber.Parse("-"));
@@ -238,13 +236,13 @@ namespace CalcProjectTest
             RomanNumber rn10 = RomanNumber.Add("I","IX");
             RomanNumber rn9 = RomanNumber.Add(rn5,"IV");
             RomanNumber rn15 = RomanNumber.Add(rn5,rn10);
-            //Прохождения тестов + рефакторинга
+            // Прохождения тестов + рефакторинга
             Assert.AreEqual(5, rn5.romanNumber);
             Assert.AreEqual(rn8.romanNumber, (rn5.romanNumber+3));
             Assert.AreEqual(rn10.ToString(), "X");
             Assert.AreEqual(rn9.romanNumber, rn5.romanNumber+RomanNumber.Parse("IV"));
             Assert.AreEqual(rn15.romanNumber, rn5.romanNumber + rn10.romanNumber);
-            //Исключения для статика + для рефакторинга
+            // Исключения для статика + для рефакторинга
             Assert.ThrowsException<ArgumentException>(() => RomanNumber.Add("",""));
             Assert.ThrowsException<ArgumentException>(() => RomanNumber.Add("-","-"));
             Assert.ThrowsException<ArgumentException>(() => RomanNumber.Add("",null!));
