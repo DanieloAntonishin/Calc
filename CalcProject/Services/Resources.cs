@@ -9,79 +9,140 @@ namespace CalcProject.Services
 {
     public class Resources
     {
-        public string Culture { get; set; } = "en-US";  // Язык по-умолчание в системе   
+        private readonly static Dictionary<int, string> ListOfCulture = new Dictionary<int, string>() { [1] = "uk-UA", [2] = "en-US" };   // Добавление словаря с допустимыми в программе языками интерфейса   
+        private string Culture { get; set; } = ListOfCulture[2];    // по умолчанию 
+        public void SetCulture()        // Метод для ввода пользователем языка системы
+        {
+            int input;
+            do
+            {
+                Console.Write("Enter language in system (1-Ukrainian 2-English): ");
+                input = int.Parse(Console.ReadLine().Replace(" ", ""));     // Уборка пробелов и преобразование 
+                try
+                {
+                    Culture = GetInputCulture(input);       // Проверка на исключения, если такого языка нет в словаре
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
 
-        public string GetEmptyStringMessage(string? culture = null)  // Исключения на пустоту строки 
+            } //while (!(input=="1"||input=="2"));
+            while (!ListOfCulture.ContainsKey(input));      // Если выбрано допустимое значение
+            Console.Clear();
+        }
+        public string GetInputCulture(int key)      // Проверка на содержание языка в словаре 
+        {
+            /*return input switch
+            //{
+            //    "1" => "uk-UA",
+            //    "2" => "en-US",
+            //    _ => throw new Exception("Unupported culture")
+            };
+            */
+            return ListOfCulture.ContainsKey(key) ? ListOfCulture[key] : throw new Exception(GetUnsupportedCultureMessage());   // Возврат значения языка, или выброс исключения
+        }
+        public string GetUnsupportedCultureMessage(string? culture = null)      // Не допустимый язык в системе 
+        {
+            culture ??= Culture;
+            return culture switch
+            {
+                "uk-UA" => $"Непідтримувана культура",
+                "en-US" => $"Unsupported culture",
+                _ => throw new Exception("Wrong system options!")
+            };
+        }
+        public string GetEmptyStringMessage(string? culture = null)             // Сообщение об пустой строке  
         {
             if (culture == null) culture = Culture;
-            switch (culture)                                          //  switch для проверки выбраного языка 
+            switch (culture)
             {
-                case "uk-UA": return "Порожній рядок неприпустимий"; 
+                case "uk-UA": return "Порожній рядок неприпустимий";
                 case "en-US": return "Empty string not allowed";
             }
-            throw new Exception("Unupported culture");
+            throw new Exception(GetUnsupportedCultureMessage());
         }
 
-        public string GetInvalidCharMessage(char c, string? culture = null)  // Исключения на не допустимого символа 
+        public string GetInvalidCharMessage(char c, string? culture = null)     // Сообщение об не допустимом символе 
         {
-            culture ??= Culture; 
-            return culture switch                                            // Новый вид switch 
+            culture ??= Culture;
+            return culture switch
             {
                 "uk-UA" => $"Недозволений символ '{c}'",
                 "en-US" => $"Invalid char '{c}'",
-                _ => throw new Exception("Unupported culture")
+                _ => throw new Exception(GetUnsupportedCultureMessage())
             };
         }
-        public string GetInvalidTypeMessage(int objNumber, string type, string? culture = null)  // Исключения на не поддерживаемый тип данных
+        public string GetInvalidTypeMessage(string type, string? culture = null)     // Сообщение об не поддерживаем типе данных
         {
             culture = culture ?? Culture;
             return culture switch
             {
-                "uk-UA" => $"obj{objNumber}: тип '{type}' не підтримується",
-                "en-US" => $"obj{objNumber}: type '{type}' unsupported",
-                _ => throw new Exception("Unupported culture")
+                "uk-UA" => $"obj: тип '{type}' не підтримується",
+                "en-US" => $"obj: type '{type}' unsupported",
+                _ => throw new Exception(GetUnsupportedCultureMessage())
             };
         }
-        public string GetOnlyOne_N_Exception(string? culture = null)    // Исключения на попадание больше одного "N"
+        public string GetOnlyOne_N_Exception(string? culture = null)     // Сообщение об возможности только одного 'N'
         {
             culture ??= Culture;
             return culture switch
             {
                 "uk-UA" => "Недозволенний символ, тільки одна 'N'",
                 "en-US" => "Invalid number, only one 'N'",
-                _ => throw new Exception("Unsupported culture")
+                _ => throw new Exception(GetUnsupportedCultureMessage())
             };
         }
-        public string GetEnterNumberMessage(string? culture = null)     // Сообщения при работе с консолью пользователю UI
+        public string GetEnterNumberMessage(string? culture = null)     // Сообщение пользователю об вводе числа 
         {
             culture ??= Culture;
             return culture switch
             {
                 "uk-UA" => "Введiть число: ",
                 "en-US" => "Enter number: ",
-                _ => throw new Exception("Unsupported culture"),
+                _ => throw new Exception(GetUnsupportedCultureMessage()),
             };
         }
         // Enter operation
-        public string GetEnterOperationMessage(string? culture = null)      // Сообщения на ввода операцию в консоль
+        public string GetEnterOperationMessage(string? culture = null)     // Сообщение об том что такой операции нет в калькуляторе 
         {
             culture ??= Culture;
             return culture switch
             {
-                "uk-UA" => "Введiть операцiю: ",
+                "uk-UA" => "Такої операцiї не існує: ",
                 "en-US" => "Enter operation: ",
-                _ => throw new Exception("Unsupported culture"),
+                _ => throw new Exception(GetUnsupportedCultureMessage()),
             };
         }
         // Result
-        public string GetResultMessage(int res, string? culture = null)      // Сообщения на получения результата в консоль
+        public string GetResultMessage(string userInput, string res, string? culture = null)     // Сообщение пользователю об результате
         {
             culture ??= Culture;
             return culture switch
             {
-                "uk-UA" => $"Результат: {res}",
-                "en-US" => $"Result: {res}",
-                _ => throw new Exception("Unsupported culture"),
+                "uk-UA" => $"Результат ({userInput}) : {res}",
+                "en-US" => $"Result ({userInput}) : {res}",
+                _ => throw new Exception(GetUnsupportedCultureMessage()),
+            };
+        }
+        public string GetInputOperation(string? culture = null)     // Сообщение пользователю про ввод операции
+        {
+            culture ??= Culture;
+            return culture switch
+            {
+                "uk-UA" => "Введіть вираз (Х + Х):",
+                "en-US" => "Enter expression (X + X): ",
+                _ => throw new Exception(GetUnsupportedCultureMessage()),
+            };
+        }
+        public string GetInvalidInputExression(string? culture = null)     // Сообщение об не допустимом выражении
+        {
+            culture ??= Culture;
+            return culture switch
+            {
+                "uk-UA" => "Не допустимий вираз",
+                "en-US" => "Invalid expression",
+                _ => throw new Exception(GetUnsupportedCultureMessage()),
             };
         }
 

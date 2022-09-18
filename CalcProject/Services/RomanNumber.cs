@@ -1,24 +1,47 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 namespace CalcProject.Services
 {
     public record RomanNumber
     {
         public int romanNumber { set; get; }
-        public static Resources Resources { get; set; } = null!;    // DI
-        public RomanNumber(int num = 0) => romanNumber = num;
+        public static Resources Resources { get; set; } = null!;
+
+        public readonly static Dictionary<string, Delegate> Operations = new Dictionary<string, Delegate>()     // Словарь из ключа операции и вызова метода, с помощью делегата
+        {       
+            ["+"] = new Func<object, object, RomanNumber>(Add),     // Добавление в одном месте операции и значения равной методу 
+            ["-"] = new Func<object, object, RomanNumber>(Sub),     // Рефакторинг класса по добавлению операции 
+            ["*"] = new Func<object, object, RomanNumber>(Mul),     
+            ["/"] = new Func<object, object, RomanNumber>(Div)
+        };
+
+        public RomanNumber(int num = 0) => romanNumber = num;       // Коснструктор с арабским числом
+        private RomanNumber(object obj)
+        {
+            if (obj is null) throw new ArgumentNullException($"obj is null");  // проверка и исключения для отлова в тестах 
+
+            if (obj is int val) romanNumber = val;                                 // int
+            else if (obj is String str && str.Length > 0) romanNumber = Parse(str);  // string
+            else if (obj is RomanNumber rn) romanNumber = rn.romanNumber;                                       // RomanNumber
+            else throw new ArgumentException(Resources.GetInvalidTypeMessage(obj.GetType().Name));                     // else вызов исключения 
+        }
         /// <summary>
         /// перевод из арабских чисел в римские
         /// </summary>
         /// <returns>Строку</returns>
         public override string ToString()
         {
-            if (this.romanNumber == 0) { return "N"; };
-            int n = this.romanNumber < 0 ? -this.romanNumber : this.romanNumber;
+            if (this.romanNumber == 0) { return "N"; };                                 // При 0 возврат сразу N
+            int n = this.romanNumber < 0 ? -this.romanNumber : this.romanNumber;        // Проверка на меньше 0
             string res = this.romanNumber < 0 ? "-" : "";
             string[] parts = { "M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I" };
             int[] val = { 1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1 };
 
-            for (int i = 0; i < parts.Length; i++)
+            for (int i = 0; i < parts.Length; i++)      // Формируем результат 
             {
                 while (n >= val[i])
                 {
@@ -148,12 +171,34 @@ namespace CalcProject.Services
 
         // После рефакторинга 
 
-        public RomanNumber Add(RomanNumber rn)
+        public RomanNumber Add(RomanNumber rn2)
         {
-            if (rn is null) { throw new ArgumentNullException(nameof(rn)); }
-            return new(this.romanNumber + rn.romanNumber);
+            if (rn2 is null) { throw new ArgumentNullException(nameof(rn2)); }
+            return new(this.romanNumber + rn2.romanNumber);
             //return this with {romanNumber=this.romanNumber + rn.romanNumber };
         }
+        public RomanNumber Sub(RomanNumber rn2)
+        {
+            if (rn2 == null) throw new ArgumentNullException(nameof(rn2));
+            return new(this.romanNumber - rn2.romanNumber);
+            //return this.Add(rn2 with { romanNumber=-rn2.romanNumber });
+        }
+        public RomanNumber Mul(RomanNumber rn2)
+        {
+            if (rn2 == null) throw new ArgumentNullException(nameof(rn2));
+            return new(this.romanNumber * rn2.romanNumber);
+            //return this.Add(rn2 with { romanNumber=-rn2.romanNumber });
+        }
+        public RomanNumber Div(RomanNumber rn2)
+        {
+            if (rn2 == null) throw new ArgumentNullException(nameof(rn2));
+            if (rn2.romanNumber == 0) throw new ArgumentException(nameof(rn2));
+            if (this.romanNumber % rn2.romanNumber != 0) throw new ArgumentException(nameof(rn2));
+
+            return new(this.romanNumber / rn2.romanNumber);
+            //return this.Add(rn2 with { romanNumber=-rn2.romanNumber });
+        }
+
         public RomanNumber Add(int val)
         {
             // Вместо дуюлирования алгоритма мы создаем объект из 
@@ -259,7 +304,7 @@ namespace CalcProject.Services
         /// <param name="obj2">int, String, RomanNumber</param>
         /// <returns>RomanNumber</returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public static RomanNumber Add(object obj1, object obj2)
+        public static RomanNumber Add_Old(object obj1, object obj2)
         {
             /* Рефакторинг - разделение условий (условия внутри условия)
             if (obj1 is null || obj2 is null)
@@ -316,10 +361,35 @@ namespace CalcProject.Services
                 if (pars[i] is int val) rns[i] = new RomanNumber(val);                                 // int
                 else if (pars[i] is String str && str.Length > 0) rns[i] = new RomanNumber(Parse(str));  // string
                 else if (pars[i] is RomanNumber rn) rns[i] = rn;                                       // RomanNumber
-                else throw new ArgumentException(Resources.GetInvalidTypeMessage(i + 1, pars[i].GetType().Name));                     // else вызов исключения 
+                else throw new ArgumentException(Resources.GetInvalidTypeMessage(pars[i].GetType().Name));                     // else вызов исключения 
             }
 
             return rns[0].Add(rns[1]);  // результат 
+        }
+        // Методы статик с рефакторингом
+        public static RomanNumber Add(object obj1, object obj2)
+        {
+            var rn1 = (obj1 is RomanNumber r) ? r : new RomanNumber(obj1);      // Проверки на соответсвию на тип или присваивания object
+            var rn2 = (obj2 is RomanNumber r2) ? r2 : new RomanNumber(obj2);
+            return rn1.Add(rn2);                                                // Результат операции
+        }
+        public static RomanNumber Sub(object obj1, object obj2)
+        {
+            var rn1 = (obj1 is RomanNumber r) ? r : new RomanNumber(obj1);      // Проверки на соответсвию на тип или присваивания object
+            var rn2 = (obj2 is RomanNumber r2) ? r2 : new RomanNumber(obj2);
+            return rn1.Sub(rn2);                                                // Результат операции
+        }
+        public static RomanNumber Mul(object obj1, object obj2)
+        {
+            var rn1 = (obj1 is RomanNumber r) ? r : new RomanNumber(obj1);      // Проверки на соответсвию на тип или присваивания object
+            var rn2 = (obj2 is RomanNumber r2) ? r2 : new RomanNumber(obj2);
+            return rn1.Mul(rn2);                                                // Результат операции
+        }
+        public static RomanNumber Div(object obj1, object obj2)
+        {
+            var rn1 = (obj1 is RomanNumber r) ? r : new RomanNumber(obj1);      // Проверки на соответсвию на тип или присваивания object
+            var rn2 = (obj2 is RomanNumber r2) ? r2 : new RomanNumber(obj2);
+            return rn1.Div(rn2);                                               // Результат операции
         }
     }
 }
